@@ -6,7 +6,8 @@ type state = {
 type action =
   | Loaded(PersonData.person)
   | ClickIncrease
-  | ClickDecrease;
+  | ClickDecrease
+  | ClickReset;
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -34,25 +35,81 @@ let make = _children => {
         count: state.count
       })
     | ClickIncrease =>
-      ReasonReact.Update({
-        ...state,
-        count:
-          if (state.count < 88) {
-            state.count + 1;
-          } else {
-            state.count;
+      ReasonReact.UpdateWithSideEffects(
+        {
+          ...state,
+          count:
+            if (state.count < 88) {
+              state.count + 1;
+            } else {
+              state.count;
+            }
+        },
+        (
+          self => {
+            let loadPerson = self.reduce(personData => Loaded(personData));
+            PersonData.fetchPerson(
+              "https://swapi.co/api/people/"
+              ++ string_of_int(state.count)
+              ++ "/"
+            )
+            |> Js.Promise.then_(personData => {
+                 loadPerson(personData);
+                 Js.Promise.resolve();
+               })
+            |> ignore;
           }
-      })
+        )
+      )
     | ClickDecrease =>
-      ReasonReact.Update({
-        ...state,
-        count:
-          if (state.count > 1) {
-            state.count - 1;
-          } else {
-            state.count;
+      ReasonReact.UpdateWithSideEffects(
+        {
+          ...state,
+          count:
+            if (state.count > 1) {
+              state.count - 1;
+            } else {
+              state.count;
+            }
+        },
+        (
+          self => {
+            let loadPerson = self.reduce(personData => Loaded(personData));
+            PersonData.fetchPerson(
+              "https://swapi.co/api/people/"
+              ++ string_of_int(state.count)
+              ++ "/"
+            )
+            |> Js.Promise.then_(personData => {
+                 loadPerson(personData);
+                 Js.Promise.resolve();
+               })
+            |> ignore;
           }
-      })
+        )
+      )
+      |ClickReset =>
+      ReasonReact.UpdateWithSideEffects(
+        {
+          ...state,
+          count: 1
+        },
+        (
+          self => {
+            let loadPerson = self.reduce(personData => Loaded(personData));
+            PersonData.fetchPerson(
+              "https://swapi.co/api/people/"
+              ++ string_of_int(state.count)
+              ++ "/"
+            )
+            |> Js.Promise.then_(personData => {
+                 loadPerson(personData);
+                 Js.Promise.resolve();
+               })
+            |> ignore;
+          }
+        )
+      ) 
     },
   render: self => {
     let personItem =
@@ -72,9 +129,12 @@ let make = _children => {
         )>
         (ReasonReact.stringToElement("Star Wars Characters"))
       </h1>
-      {personItem}
-      <Button content="Increase" boop={_event => self.send(ClickIncrease)}/>
-      <Button content="Decrease" boop={_event => self.send(ClickDecrease)}/>
+      personItem
+      <Button content="Click for next character" boop=(_event => self.send(ClickIncrease)) />
+      <p/>
+      <Button content="Click for previous character" boop=(_event => self.send(ClickDecrease)) />
+      <p/>
+      <Button content="Click to reset" boop=(_event => self.send(ClickReset)) />
     </div>;
   }
 };

@@ -7,12 +7,13 @@ let make = (~content, ~boop, _children) => {
         onClick={boop}
         style=(
           ReactDOMRe.Style.make(
-            ~color="#FED02F",
+            ~color="grey",
             ~textAlign="center",
-            ~fontSize="68px",
+            ~fontSize="20px",
+            ~border="2px solid darkGrey",
             ()
           )
         )>
-        (ReasonReact.stringToElement("Click me to" ++ content))
+        (ReasonReact.stringToElement(content))
       </button>
 };
