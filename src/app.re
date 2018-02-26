@@ -50,7 +50,7 @@ let make = _children => {
             let loadPerson = self.reduce(personData => Loaded(personData));
             PersonData.fetchPerson(
               "https://swapi.co/api/people/"
-              ++ string_of_int(state.count)
+              ++ string_of_int(self.state.count)
               ++ "/"
             )
             |> Js.Promise.then_(personData => {
@@ -77,7 +77,7 @@ let make = _children => {
             let loadPerson = self.reduce(personData => Loaded(personData));
             PersonData.fetchPerson(
               "https://swapi.co/api/people/"
-              ++ string_of_int(state.count)
+              ++ string_of_int(self.state.count)
               ++ "/"
             )
             |> Js.Promise.then_(personData => {
@@ -99,7 +99,7 @@ let make = _children => {
             let loadPerson = self.reduce(personData => Loaded(personData));
             PersonData.fetchPerson(
               "https://swapi.co/api/people/"
-              ++ string_of_int(state.count)
+              ++ string_of_int(self.state.count)
               ++ "/"
             )
             |> Js.Promise.then_(personData => {
