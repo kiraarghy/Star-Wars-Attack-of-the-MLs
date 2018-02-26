@@ -31,8 +31,7 @@ let make = _children => {
     | Loaded(loadedPerson) =>
       ReasonReact.Update({
         ...state,
-        personData: Some(loadedPerson),
-        count: state.count
+        personData: Some(loadedPerson)
       })
     | ClickIncrease =>
       ReasonReact.UpdateWithSideEffects(
